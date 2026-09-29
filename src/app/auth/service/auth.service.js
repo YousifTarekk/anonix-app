@@ -7,6 +7,12 @@ import jwt from "jsonwebtoken";
 import {sendEmail} from "../../../common/email/nodemailer.js";
 import {userErrors} from "../errors.js";
 import {generateOTP} from "../../../common/utils/otp.js";
+import {generateToken} from "../utils/token.js";
+import {comparePassword, hashPassword} from "../utils/hash.js";
+import e from "express";
+import {verifyGoogleToken} from "../../../common/utils/google-auth.js";
+import {email} from "zod";
+import {createUser} from "../repo/auth.repo.js";
 
 
 export async function register(userData) {
@@ -16,7 +22,7 @@ export async function register(userData) {
         throw userErrors.userAlreadyExists;
     }
 
-    userData.password = await bcrypt.hash(userData.password, 10);
+    userData.password = await hashPassword(userData.password);
 
     const createdUser = await authRepository.createUser(userData);
 
@@ -68,39 +74,83 @@ export async function verifyAccount(email, code) {
 }
 
 export async function login(email, password) {
-    //1-check user existence
     const user = await authRepository.checkUserByEmail(email);
-    if (!user)throw userErrors.userNotFound;
-    //1.2 check user verified
-    if(user.isVerified === false) throw userErrors.userNotVerified
-    //2-compare password
-    const match=bcrypt.compare(password,user.password);
-    if(!match)throw userErrors.invalidPassword
-    //3-generate token
-    const token = jwt.sign({
-        id: user._id,
-        email: user.email,
-        name: user.name,
-    },
-        process.env.JWT_SECRET,
-        {expiresIn:toMs(1,"hours")}
-        );
-    return token;
 
+    if (!user) throw userErrors.userNotFound;
+
+    if (user.isVerified === false) {
+        throw userErrors.userNotVerified;
+    }
+
+    const match = await comparePassword(password,user['password']);
+
+    if (!match) throw userErrors.invalidPassword;
+
+
+    return generateToken({id: user._id,name:user.name});
 }
-export async function sendOTP(email){
-    //1-check user existence
-    const user=await authRepository.checkUserByEmail(email);
-    if(!user)throw userErrors.userNotFound;
-    //2-delete all old otp
+
+export async function sendOTP(email) {
+    const user = await authRepository.checkUserByEmail(email);
+
+    if (!user) throw userErrors.userNotFound;
+
     await otpRepository.deleteOtp(email);
-    //3-generat otp and save to DB
-    const code=generateOTP()
+
+    const code = generateOTP();
+
     await otpRepository.createOtp({
         code: code,
-        email:email,
+        email: email,
         expiresAt: new Date(Date.now() + toMs(3, "minutes")),
     });
-    //4-send email
-    await sendEmail(email, 'new otp', `<p>your new otp is ${code}</p>`)
+
+    await sendEmail(
+        email,
+        "new otp",
+        `<p>your new otp is ${code}</p>`
+    );
+}
+
+export async function resetPassword(email,code,newPassword) {
+    //1.verify otp code
+    const otp = await otpRepository.getOtpByEmail(email);
+    if (!otp)throw userErrors.otpNotFound;
+    if (otp.code!== code)throw userErrors.invalidOtp;
+
+    //2.hash password
+    const hashedPassword=await hashPassword(newPassword);
+    //3.update password
+    await userRepository.updateUser(email,{password:hashedPassword});
+    //4.delte otp
+    await otpRepository.deleteOtp(email);
+
+}
+export async function loginWithGoogle(idToken) {
+    //1.verify id token
+    const payLoad = await verifyGoogleToken(idToken);
+
+    //2.check user exist
+    const user = await authRepository.checkUserByEmail(payLoad.email);
+
+    //3.if user exist==>generate token
+    if (user) {
+        return generateToken({
+            id: user._id,
+            email: user.email,
+        });
+    }
+
+    //4.if not exist==>create user&generate token
+    const createdUser = await authRepository.createUser({
+        name: payLoad.name,
+        email: payLoad.email,
+        provider: "google",
+        isVerified: true,
+    });
+
+    return generateToken({
+        id: createdUser._id,
+        email: createdUser.email,
+    });
 }

@@ -1,9 +1,12 @@
 import * as authService from '../service/auth.service.js'
 import {toMs} from "../../../common/utils/time.js";
+import {validationBody} from "../../../common/validation/validation.js";
+import {loginDTO, registerDTO, resetPasswordDTO, sendDTO, verifyAccountDTO} from "../dto/auth.dto.js";
 
 export async function register(req,res,next) {
     try {
-        const createdUser=await authService.register(req.body)
+        const data=validationBody(registerDTO,req.body)
+        const createdUser=await authService.register(data)
         res.status(201).json({
             status:"success",
             message:"User created successfully",
@@ -15,7 +18,8 @@ export async function register(req,res,next) {
 }
 export async function verifyAccount(req,res,next) {
     try {
-        const {email,code} = req.body;
+        const data=validationBody(verifyAccountDTO,req.body)
+        const {email,code} = data;
         const updatedUser=await authService.verifyAccount(email,code)
         res.json({success:true,message:"User verified successfully",data:updatedUser})
     }catch (error) {
@@ -24,7 +28,8 @@ export async function verifyAccount(req,res,next) {
 }
 export async function login(req,res,next) {
     try {
-        const {email,password} = req.body;
+        const data=validationBody(loginDTO,req.body)
+        const {email,password} = data;
         const token=await authService.login(email,password)
         res.cookie('access_token',token,{httpOnly:true,maxAge:toMs(1,'hours')})
         res.json({success:true,message:"Login successfully"})
@@ -35,9 +40,31 @@ export async function login(req,res,next) {
 }
 export async function sendOTP(req,res,next) {
     try {
-        const {email}=req.body;
+        const data=validationBody(sendDTO,req.body);
+        const {email}=data;
         await authService.sendOTP(email);
         res.json({success:true,message:"OTP sent successfully,check your email"})
+    }catch (error) {
+        next(error)
+    }
+}
+export async function resetPassword(req,res,next) {
+    try {
+        const data=validationBody(resetPasswordDTO,req.body)
+        const {email,code,newPassword} = data;
+        await authService.resetPassword(email,code,newPassword);
+        res.sendStatus(204)
+    }catch (error) {
+        next(error)
+    }
+}
+export async function loginWithGoogle(req,res,next) {
+    try {
+        const token=await authService.loginWithGoogle(req.body.idToken);
+        res.cookie('access_token',token,{
+            httpOnly:true,maxAge:toMs(1,'hours')
+        })
+        res.json({success:true,message:"Login successfully"})
     }catch (error) {
         next(error)
     }
