@@ -8,7 +8,7 @@ export async function verifyGoogleToken(idToken) {
 
         const ticket=await client.verifyIdToken({
             idToken:idToken,
-            audience:process.env.GOOGLE_OAUTH_CLIENT_ID
+            audience:env.google.webClientID
         })
         return ticket.getPayload();
 

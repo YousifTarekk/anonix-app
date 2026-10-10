@@ -1,6 +1,6 @@
 import * as authService from '../service/auth.service.js'
-import {toMs} from "../../../common/utils/time.js";
-import {validationBody} from "../../../common/validation/validation.js";
+import {toMs} from "../../../pkg/utils/time.js";
+import {validationBody} from "../../../lib/validation/validation.js";
 import {loginDTO, registerDTO, resetPasswordDTO, sendDTO, verifyAccountDTO} from "../dto/auth.dto.js";
 
 export async function register(req,res,next) {
@@ -53,6 +53,8 @@ export async function resetPassword(req,res,next) {
         const data=validationBody(resetPasswordDTO,req.body)
         const {email,code,newPassword} = data;
         await authService.resetPassword(email,code,newPassword);
+        res.json({success:true,message:"Reset password successfully"})
+
         res.sendStatus(204)
     }catch (error) {
         next(error)

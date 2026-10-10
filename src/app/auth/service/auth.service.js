@@ -1,18 +1,19 @@
 import * as authRepository from "../repo/auth.repo.js";
 import * as otpRepository from "../repo/otp.repo.js";
 import * as userRepository from "../../user/repo/user.repo.js";
-import {toMs} from "../../../common/utils/time.js";
+import {toMs} from "../../../pkg/utils/time.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {sendEmail} from "../../../common/email/nodemailer.js";
+import {sendEmail} from "../../../lib/email/nodemailer.js";
 import {userErrors} from "../errors.js";
-import {generateOTP} from "../../../common/utils/otp.js";
+import {generateOTP} from "../../../lib/utils/otp.js";
 import {generateToken} from "../utils/token.js";
 import {comparePassword, hashPassword} from "../utils/hash.js";
 import e from "express";
-import {verifyGoogleToken} from "../../../common/utils/google-auth.js";
+import {verifyGoogleToken} from "../../../lib/utils/google-auth.js";
 import {email} from "zod";
 import {createUser} from "../repo/auth.repo.js";
+import {mailjetProvider} from "../../../lib/email/init.js";
 
 
 export async function register(userData) {
@@ -34,7 +35,7 @@ export async function register(userData) {
         expiresAt: new Date(Date.now() + toMs(5, "minutes")),
     });
 
-    await sendEmail(
+    await mailjetProvider.sendEmail(
         userData.email,
         "verification email",
         `<h1>Your verification code is ${otp}</h1>`
@@ -57,7 +58,7 @@ export async function verifyAccount(email, code) {
     const otp = await otpRepository.getOtpByEmail(email);
 
     if (!otp) {
-        throw userErrors.otpNotFound;
+        throw userErrors.otpExpired;
     }
 
     if (otp.code !== code) {
@@ -105,7 +106,7 @@ export async function sendOTP(email) {
         expiresAt: new Date(Date.now() + toMs(3, "minutes")),
     });
 
-    await sendEmail(
+    await mailjetProvider.sendEmail(
         email,
         "new otp",
         `<p>your new otp is ${code}</p>`
@@ -115,7 +116,7 @@ export async function sendOTP(email) {
 export async function resetPassword(email,code,newPassword) {
     //1.verify otp code
     const otp = await otpRepository.getOtpByEmail(email);
-    if (!otp)throw userErrors.otpNotFound;
+    if (!otp)throw userErrors.otpExpired;
     if (otp.code!== code)throw userErrors.invalidOtp;
 
     //2.hash password

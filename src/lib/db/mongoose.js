@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import { config } from "dotenv";
+import {env} from "../config/env.js";
 
-config();
+
 
 mongoose
-    .connect(process.env.MONGODB_URL)
+    .connect(env.db.url)
     .then(() => {
         console.log("MongoDB connected successfully");
     })
