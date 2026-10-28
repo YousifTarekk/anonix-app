@@ -9,4 +9,4 @@ export const uploadProfilePic=async (userId,file) => {
         fs.unlinkSync(user.profilePicPath)
     }
     await userRepository.updateUser(user.email, {profilePicPath: file.path})
-}
+} 

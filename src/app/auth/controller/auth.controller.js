@@ -1,7 +1,7 @@
 import * as authService from '../service/auth.service.js'
 import {toMs} from "../../../pkg/utils/time.js";
 import {validationBody} from "../../../lib/validation/validation.js";
-import {loginDTO, registerDTO, resetPasswordDTO, sendDTO, verifyAccountDTO} from "../dto/auth.dto.js";
+import {loginDTO, registerDTO, resetPasswordDTO, sendDTO, verifyAccountDTO, verifyCodeDTO} from "../dto/auth.dto.js";
 
 export async function register(req,res,next) {
     try {
@@ -30,10 +30,24 @@ export async function login(req,res,next) {
     try {
         const data=validationBody(loginDTO,req.body)
         const {email,password} = data;
-        const token=await authService.login(email,password)
+        const token=await authService.login(email,password);
+        if(!token){
+            return res.json({message:"check your inbox for verification code",success:true})
+        }
         res.cookie('access_token',token,{httpOnly:true,maxAge:toMs(1,'hours')})
         res.json({success:true,message:"Login successfully"})
 
+    }catch (error) {
+        next(error)
+    }
+}
+export async function verifyCodeToLogin(req,res,next) {
+    try {
+        const data=validationBody(verifyAccountDTO,req.body)
+        const {email,code} = data;
+        const accessToken=await authService.verifyCodeToLoggin(email,code);
+        res.cookie('access_token',accessToken,{httpOnly:true,maxAge:toMs(1,'hours')})
+        res.json({success:true,message:"Login successfully"})
     }catch (error) {
         next(error)
     }
@@ -48,14 +62,30 @@ export async function sendOTP(req,res,next) {
         next(error)
     }
 }
+export async function sendTwoStepVerificationOtp(req,res,next) {
+    try {
+        await authService.sendTwoStepVerificationOtp(req.user.id)
+        res.json({success:true,message:"OTP sent successfully,check your email"})
+    }catch (error) {
+        next(error)
+    }
+}
+export async function enableTwoStepVerification(req,res,next) {
+    try {
+        const data=validationBody(verifyCodeDTO,req.body)
+        const {code} = data;
+        await authService.enable2stepVerification(req.user.id,code)
+        res.json({success:true,message:"Two-step verification enabled successfully"})
+    }catch (error) {
+        next(error)
+    }
+}
 export async function resetPassword(req,res,next) {
     try {
         const data=validationBody(resetPasswordDTO,req.body)
         const {email,code,newPassword} = data;
         await authService.resetPassword(email,code,newPassword);
         res.json({success:true,message:"Reset password successfully"})
-
-        res.sendStatus(204)
     }catch (error) {
         next(error)
     }

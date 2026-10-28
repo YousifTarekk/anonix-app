@@ -18,7 +18,7 @@ userRouter.get(
 );
 userRouter.post('/upload-profile-pic',
     guard, uploadSingleFile('pp'),
-    fileValidation(),
+    fileValidation(allowedFields.image),
     userController.uploadProfilePic
 
 );
@@ -30,7 +30,9 @@ userRouter.post('/upload-cv', uploadSingleFile('cv',allowedFields.files),
     res.json('ok');
 });
 
-userRouter.post('/upload-cover-images', uploadFilesArray('cover-images'), (req, res, next) => {
+userRouter.post('/upload-cover-images', uploadFilesArray('cover-images'),
+    fileValidation(allowedFields.image),
+    (req, res, next) => {
     console.log(req.files);
     res.json('ok');
 });

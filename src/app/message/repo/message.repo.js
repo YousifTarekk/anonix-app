@@ -10,7 +10,8 @@ export async function createMessage(content,receiver,sender){
 export async function getAllMessages(userId) {
     return await Message.find(
         {
-            receiver: userId
+            receiver: userId,
+            isDeleted: false
         },
         {},
         {
@@ -20,4 +21,10 @@ export async function getAllMessages(userId) {
             }
         }
     );
+}
+export async function findMessageById(id) {
+    return await Message.findOne({_id: id, isDeleted: false})
+}
+export async function updateMessage(id, updateData) {
+    return await Message.findByIdAndUpdate(id, updateData, {returnDocument: "after"})
 }

@@ -42,6 +42,15 @@ const userSchema = new Schema({
     profilePicPath:String,
     coverImagePaths:[String],
     cvPath:String,
+    twoStepVerification:{
+        type:Boolean,
+        default:false
+    },
+    failedLoginAttempts:{
+        type:Number,
+        default:0
+    },
+    banUntil:Date,
 },
     {
         timestamps:{

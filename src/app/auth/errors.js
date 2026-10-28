@@ -8,4 +8,6 @@ export const userErrors = {
     invalidOtp: new AppError("wrong OTP , please resend OTP",404),
     invalidPassword:new AppError("invalid password",400),
     userNotVerified: new AppError("User not verified",403),
+    twoStepAlreadyEnabled: new AppError("Two-step verification already enabled",400),
+    accountBanned: (minutesLeft) => new AppError(`Account temporarily banned, try again after ${minutesLeft} minute(s)`,403),
 };

@@ -10,6 +10,9 @@
 - isVerified [boolean] – [default: false]
 - dob [Date]
 - gender [String] - [Male - Female]
+- twoStepVerification [boolean] – [default: false]
+- failedLoginAttempts [Number] – [default: 0]
+- banUntil [Date]
 - createdAt [Date]
 - updatedAt [Date]
 
@@ -20,7 +23,38 @@
 - content -> [String - required - trim:true - minlength:1 - maxlength:200]
 - receiver -> [ObjectId - required - ref:'User']
 - sender -> [ObjectId - ref:'User']
+- isSenderRevealed -> [boolean] – [default: false]
 - isDeleted -> [boolean] – [default: false]
+- createdAt -> [Date]
+- updatedAt -> [Date]
+
+-------------------------------
+
+* IdentityRequest
+
+- message -> [ObjectId - required - unique:true - ref:'Message']
+- requester -> [ObjectId - required - ref:'User'] (the message receiver)
+- sender -> [ObjectId - required - ref:'User']
+- status -> [String] - [pending - accepted - rejected] – [default: pending]
+- createdAt -> [Date]
+- updatedAt -> [Date]
+
+-------------------------------
+
+* Conversation
+
+- participants -> [[ObjectId] - exactly 2 - ref:'User']
+- message -> [ObjectId - required - unique:true - ref:'Message'] (the original message)
+- createdAt -> [Date]
+- updatedAt -> [Date]
+
+-------------------------------
+
+* ConversationMessage
+
+- conversation -> [ObjectId - required - ref:'Conversation']
+- sender -> [ObjectId - required - ref:'User']
+- content -> [String - required - trim:true - minlength:1 - maxlength:200]
 - createdAt -> [Date]
 - updatedAt -> [Date]
 

@@ -16,6 +16,10 @@ const messageSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref: 'User',
     },
+    isSenderRevealed: {
+        type:Boolean,
+        default: false
+    },
     isDeleted: {
         type:Boolean,
         default: false

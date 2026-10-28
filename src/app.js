@@ -14,6 +14,10 @@ export function createApp(){
     app.use(express.json())
     app.use(cookieParser())
 app.use(correlationId)
+app.get('/health', (req, res,next) => {
+    console.log('Health check endpoint hit');
+    res.status(200).json({ status: 'ok' });
+});
 app.use('/api',router)
     app.use(globalErrorHandler);
 return app;

@@ -21,6 +21,10 @@ export const sendDTO = z.object({
     email: z.email().toLowerCase().trim(),
 });
 
+export const verifyCodeDTO = z.object({
+    code: z.string().length(6).trim(),
+});
+
 export const resetPasswordDTO = z.object({
     email: z.email().toLowerCase().trim(),
     code: z.string().length(6).trim(),
