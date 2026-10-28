@@ -1,0 +1,612 @@
+{
+  "info": {
+    "name": "anonix-app",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000/api"
+    },
+    {
+      "key": "receiverId",
+      "value": "6ac7fdd5c5d4570bbcd30710"
+    },
+    {
+      "key": "messageId",
+      "value": ""
+    },
+    {
+      "key": "requestId",
+      "value": ""
+    },
+    {
+      "key": "conversationId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"yousif\",\n    \"email\": \"joonn6250@gmail.com\",\n    \"password\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          }
+        },
+        {
+          "name": "verify-account",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"engyousiftarek@gmail.com\",\n    \"code\": \"378865\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-account"
+              ]
+            }
+          }
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"engyousiftarek@gmail.com\",\n    \"password\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "5 wrong passwords in a row => account banned for 5 minutes. If 2-step verification is enabled, an OTP is sent and you continue with verify-code-to-login."
+          }
+        },
+        {
+          "name": "verify-code-to-login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"engyousiftarek@gmail.com\",\n    \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/verify-code-to-login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "verify-code-to-login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "send-otp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"engyousiftarek@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/send-otp",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "send-otp"
+              ]
+            }
+          }
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"engyousiftarek@gmail.com\",\n    \"code\": \"123456\",\n    \"newPassword\": \"12345678\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "reset-password"
+              ]
+            }
+          }
+        },
+        {
+          "name": "login-with-google",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"idToken\": \"<google id token>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login-with-google",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login-with-google"
+              ]
+            }
+          }
+        },
+        {
+          "name": "enable-two-step-verification",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/enable-2step-verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "enable-2step-verification"
+              ]
+            },
+            "description": "Login first. Sends an OTP to your email."
+          }
+        },
+        {
+          "name": "confirm-two-step-verification",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/confirm-2step-verification",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "confirm-2step-verification"
+              ]
+            },
+            "description": "Login first. Send the OTP you received to enable 2-step verification."
+          }
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "get-all-users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/get-all-users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "get-all-users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "upload-profile-picture",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "pp",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/upload-profile-pic",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "upload-profile-pic"
+              ]
+            }
+          }
+        },
+        {
+          "name": "upload-cv",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "cv",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/upload-cv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "upload-cv"
+              ]
+            }
+          }
+        },
+        {
+          "name": "upload-cover-images",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "cover-images",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "cover-images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/upload-cover-images",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "upload-cover-images"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "message",
+      "item": [
+        {
+          "name": "send-message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"kefe kda\",\n    \"receiver\": \"{{receiverId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/message/public",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "message",
+                "public"
+              ]
+            },
+            "description": "Login first. Sender is saved, so the receiver can request your identity."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('messageId', pm.response.json().data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "send-anonymous-message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"kefe kda\",\n    \"receiver\": \"{{receiverId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/message",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "message"
+              ]
+            },
+            "description": "No login needed. Sender is never saved, so identity can never be requested."
+          }
+        },
+        {
+          "name": "get-all-messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/message",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "message"
+              ]
+            },
+            "description": "Login first. The sender only appears after they accept your identity request."
+          }
+        }
+      ]
+    },
+    {
+      "name": "request",
+      "item": [
+        {
+          "name": "request-sender-identity",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/request/{{messageId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "request",
+                "{{messageId}}"
+              ]
+            },
+            "description": "Login as the RECEIVER of the message."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('requestId', pm.response.json().data._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "get-requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "request"
+              ]
+            },
+            "description": "Login as the SENDER. Shows all identity requests you received."
+          }
+        },
+        {
+          "name": "accept-or-reject-request",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"accepted\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/request/{{requestId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "request",
+                "{{requestId}}"
+              ]
+            },
+            "description": "Login as the SENDER. status: 'accepted' or 'rejected'. Accepting creates a conversation."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const c = pm.response.json().data?.conversation; if (c) pm.collectionVariables.set('conversationId', c._id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "conversation",
+      "item": [
+        {
+          "name": "get-conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/conversation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversation"
+              ]
+            }
+          }
+        },
+        {
+          "name": "send-conversation-message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"content\": \"hello\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/conversation/{{conversationId}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversation",
+                "{{conversationId}}",
+                "messages"
+              ]
+            }
+          }
+        },
+        {
+          "name": "get-conversation-messages",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/conversation/{{conversationId}}/messages",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "conversation",
+                "{{conversationId}}",
+                "messages"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
